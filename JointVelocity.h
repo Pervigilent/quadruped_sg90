@@ -17,6 +17,7 @@ class JointVelocity {
 		int timing; // Number of timer ticks in each pause
 		
 		JointVelocity();
+		JointVelocity(int myPosition, int mySpacing, int myDuration, int myTiming);
 		JointVelocity(const JointVelocity &obj);
 };
 	

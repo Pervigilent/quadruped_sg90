@@ -17,17 +17,18 @@
 	 bool isLoop;
 	 
 	 public:
-		Joint jointList [MAXIMUM_JOINTS];
+		Organism();
+		Joint jointList[MAXIMUM_JOINTS];
 		int jointCount;
 		
 		bool addJoint(Joint input);
+		bool insertJoint(Joint input, int count); // To check joint numbering. Change approach.
+		bool replaceJoint(Joint input, int location);
 		void incrementTime();
 		int getMovement(int jointNumber);
 		bool popSequence(int jointNumber, bool isInitial);
 		bool pushSequence(int jointNumber, JointVelocity input, bool isInitial);
-		//void pushInitialSequence(int jointNumber, JointVelocity input);
-		//void pushLoopSequence(int jointNumber, JointVelocity input);
 		void transitionLoop();
- }
+ };
  
  #endif

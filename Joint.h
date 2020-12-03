@@ -29,6 +29,7 @@ class Joint {
 		JointVelocity **movements;
 		
 		Joint();
+		Joint(int pinNumber);
 		
 		int getMovement(); // Return current desired angle, based on time
 		bool pushSequence(JointVelocity input, bool isInitial); // Push a movement sequence to either the initial or loop stack

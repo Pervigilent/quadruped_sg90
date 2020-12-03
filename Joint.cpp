@@ -7,7 +7,24 @@
  
 #include "Joint.h"
  
+
 Joint::Joint() {
+	pin = 0;
+
+	isLoop = false;
+	isEnd = false;
+	initialSequenceCounter = 0;
+	loopSequenceCounter = 0;
+	sequenceCounter = 0;
+	internalTimer = 0;
+	sequenceNumber = 0;
+	movements = initialMovements;
+}
+
+
+Joint::Joint(int pinNumber) {
+	pin = pinNumber;
+
 	isLoop = false;
 	isEnd = false;
 	initialSequenceCounter = 0;

@@ -19,6 +19,9 @@ Joint::Joint() {
 	internalTimer = 0;
 	sequenceNumber = 0;
 	movements = initialMovements;
+
+	sizeInitialMovements = 0;
+	sizeLoopMovements = 0;
 }
 
 
@@ -64,19 +67,19 @@ int Joint::getMovement() {
 bool Joint::pushSequence(JointVelocity input, bool isInitial) { // False output indicates value not pushed
 	bool output = false;
 	
-	/*
-	if (isInitial) {
-		if (initialSequenceCounter < MAXIMUM_SEQUENCE) {
-			initialMovements[initialSequenceCounter++] = new JointVelocity(input);
-			output = true;
-		}
-	} else {
-		if (loopSequenceCounter < MAXIMUM_SEQUENCE) {
-			loopMovements[loopSequenceCounter++] = new JointVelocity(input);
-			output = true;
-		}
-	}
-	*/
+
+	//if (isInitial) {
+	//	if (initialSequenceCounter < MAXIMUM_SEQUENCE) {
+	//		initialMovements[initialSequenceCounter++] = new JointVelocity(input);
+	//		output = true;
+	//	}
+	//} else {
+	//	if (loopSequenceCounter < MAXIMUM_SEQUENCE) {
+	//		loopMovements[loopSequenceCounter++] = new JointVelocity(input);
+	//		output = true;
+	//	}
+	//}
+
 	movements[sequenceCounter++] = new JointVelocity(input);
 	
 	return output;
@@ -85,19 +88,19 @@ bool Joint::pushSequence(JointVelocity input, bool isInitial) { // False output 
 bool Joint::popSequence(bool isInitial) { // False output indicates no pop occurred
 	bool output = false;
 	
-	/*
-	if (isInitial) {
-		if (initialSequenceCounter > 0) {
-			delete initialMovements[initialSequenceCounter--];
-			output = true;
-		}
-	} else {
-		if (loopSequenceCounter > 0) {
-			delete loopMovements[loopSequenceCounter--];
-			output = true;
-		}
-	}
-	*/
+	
+	//if (isInitial) {
+	//	if (initialSequenceCounter > 0) {
+	//		delete initialMovements[initialSequenceCounter--];
+	//		output = true;
+	//	}
+	//} else {
+	//	if (loopSequenceCounter > 0) {
+	//		delete loopMovements[loopSequenceCounter--];
+	//		output = true;
+	//	}
+	//}
+	
 	if (sequenceCounter > 0) {
 		delete movements[sequenceCounter--];
 	}
@@ -113,13 +116,37 @@ void Joint::tickClock() {
 		float angleIncrement;		
 		float firstAngle, secondAngle;
 		int divisions;
-		
-		divisions = movements[sequenceCounter]->timing;
-		divisions *= movements[sequenceCounter]->duration;
-		firstAngle = movements[sequenceCounter]->position;
-		secondAngle = movements[sequenceCounter + 1]->position;
-		angleIncrement = (secondAngle - firstAngle) / divisions;
-		angle = angle + angleIncrement;		
+		int space;
+
+		/*
+		* SEQUENCE_PARAMETERS:
+		* (1) position - Position to move the joint to (next position from previous position)
+		* (2) spacing - Number to increment position each cycle (after each pause)
+		* (3) duration - Number of pauses that should elapse before incrementing the joint
+		* (4) timing - Number of timer ticks in each pause
+		*/
+
+		space = movements[sequenceNumber]->spacing;
+		divisions = movements[sequenceNumber]->timing;
+		divisions *= movements[sequenceNumber]->duration;
+		firstAngle = movements[sequenceNumber]->position;
+		//secondAngle = movements[sequenceNumber + 1]->position;
+		//angleIncrement = (secondAngle - firstAngle) / divisions;
+		//angle = angle + angleIncrement;
+
+		++internalTimer;
+		if (internalTimer > divisions) {
+			internalTimer = 0;
+			angle += movements[sequenceNumber]->spacing;
+		}
+
+		if (angle > firstAngle && space > 0 || angle < firstAngle && space < 0) {
+			angle = firstAngle;
+			++sequenceNumber;
+			if (sequenceNumber > sequenceCounter) {
+				sequenceNumber = sequenceCounter;
+			}
+		}		
 }
  
 void Joint::transitionLoop() {

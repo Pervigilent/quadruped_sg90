@@ -27,6 +27,9 @@ class Joint {
 		JointVelocity *initialMovements [MAXIMUM_SEQUENCE];
 		JointVelocity *loopMovements [MAXIMUM_SEQUENCE];
 		JointVelocity **movements;
+
+		int sizeInitialMovements;
+		int sizeLoopMovements;
 		
 		Joint();
 		Joint(int pinNumber);

@@ -61,7 +61,7 @@ int Organism::getMovement(int jointNumber) {
 }
 
 void Organism::incrementTime() {
-	for (int i = 0; i < jointCount; i++) {
+	for (int i = 0; i <= jointCount; i++) {
 		jointList[i].tickClock();
 	}
 }

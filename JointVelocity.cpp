@@ -11,16 +11,16 @@ JointVelocity::JointVelocity() {
 
 }
 
-JointVelocity::JointVelocity(int myPosition, int mySpacing, int myDuration, int myTiming) {
-	position = myPosition;
-	spacing = mySpacing;
+JointVelocity::JointVelocity(int myStart, int myStop, int myDuration, int myMultiplier) {
+	start = myStart;
+	stop = myStop;
 	duration = myDuration;
-	timing = myTiming;
+	multiplier = myMultiplier;
 }
 
 JointVelocity::JointVelocity(const JointVelocity &obj) {
-		position = obj.position;
-		spacing = obj.spacing;
-		duration = obj.duration;
-		timing = obj.timing;
+	start = obj.start;
+	stop = obj.stop;
+	duration = obj.duration;
+	multiplier = obj.multiplier;
 }

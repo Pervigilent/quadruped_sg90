@@ -10,14 +10,14 @@
  #define JOINTVELOCITY_H
  
 class JointVelocity {
-	public:		
-		int position; // Position to move the joint to (next position from previous position)
-		int spacing; // Number to increment position each cycle (after each pause)
-		int duration; // Number of pauses that should elapse before incrementing the joint
-		int timing; // Number of timer ticks in each pause
+	public:
+		int start; // Start position of the joint
+		int stop; // End position of the joint
+		int duration; // Amount of time in which the movement should be accomplished
+		int multiplier; // Number of ticks in a unit of time
 		
 		JointVelocity();
-		JointVelocity(int myPosition, int mySpacing, int myDuration, int myTiming);
+		JointVelocity(int myStart, int myStop, int myDuration, int myMultiplier);
 		JointVelocity(const JointVelocity &obj);
 };
 	

@@ -17,7 +17,8 @@ Joint::Joint() {
 	loopCounter = 0;
 	sequenceCounter = &initialCounter;
 	sequenceNumber = 0;
-	movements = &initialMovements;
+	movements = initialMovements;
+	//movements = &initialMovements;
 }
 
 
@@ -32,13 +33,18 @@ Joint::Joint(int pinNumber) {
 	loopCounter = 0;
 	sequenceCounter = &initialCounter;
 	sequenceNumber = 0;
-	movements = &initialMovements;
+	movements = initialMovements;
+	//movements = &initialMovements;
+}
+
+void Joint::clear(bool isInitial) {
+
 }
  
 int Joint::getMovement() {
 	int output;
 
-	output = angle;
+	output = static_cast<int>(angle);
 	
 	return output;
 }
@@ -48,7 +54,8 @@ bool Joint::popSequence() {
 
 	output = false;
 	if (*sequenceCounter > 0) {
-		delete (*movements)[(*sequenceCounter)--];
+		delete movements[(*sequenceCounter)--];
+		//delete (*movements)[(*sequenceCounter)--];
 		output = true;
 	}
 
@@ -78,7 +85,8 @@ bool Joint::pushSequence(JointVelocity input) { // False output indicates value 
 
 	output = false;
 	if (*sequenceCounter < MAXIMUM_SEQUENCE) {
-		(*movements)[(*sequenceCounter)++] = new JointVelocity(input);
+		movements[(*sequenceCounter)++] = new JointVelocity(input);
+		//(*movements)[(*sequenceCounter)++] = new JointVelocity(input);
 		output = true;
 	}
 
@@ -104,8 +112,17 @@ bool Joint::pushSequence(JointVelocity input, bool isInitial) { // False output 
 	return output;
 }
 
-void Joint::reset() {
+void Joint::reset(bool isInitial) {
 	
+}
+
+void Joint::restart(bool isInitial) {
+	internalClock = 0;
+	externalClock = 0;
+	sequenceNumber = 0;
+	if (isInitial) {
+		//TODO: Should we transition here?
+	}
 }
 
 void Joint::tickClock() {
@@ -125,17 +142,35 @@ void Joint::tickClock() {
 
 		if (isLoop) { //TODO: Remove this. There is a bug somewhere.
 			sequenceCounter = &loopCounter;
-			movements = &loopMovements;
+			movements = loopMovements;
+			//movements = &loopMovements;
 		} else {
 			sequenceCounter = &initialCounter;
-			movements = &initialMovements;
+			movements = initialMovements;
+			//movements = &initialMovements;
 		}
+
 		if (*sequenceCounter > 0) {
-			multiplier = (*movements)[sequenceNumber]->multiplier;
-			duration = (*movements)[sequenceNumber]->duration;
+			if (sequenceNumber == *sequenceCounter) {
+				return;
+				// This can only occur if it is an initial sequence because of identical code to the
+				// commented code found below. Therefore, return and do nothing for the remaining time
+				// if the end of the initial sequence has been reached.
+
+				//if (isLoop) {
+				//	sequenceNumber = 0;
+				//} else {
+				//	return;
+				//}
+			}
+			multiplier = movements[sequenceNumber]->multiplier;
+			//multiplier = (*movements)[sequenceNumber]->multiplier;
+			duration = movements[sequenceNumber]->duration;
+			//duration = (*movements)[sequenceNumber]->duration;
 			if (sequenceNumber == 0 && externalClock == 0 && internalClock == 0) {
 				++externalClock;
-				firstAngle = (*movements)[sequenceNumber]->start;
+				firstAngle = static_cast<float>(movements[sequenceNumber]->start);
+				//firstAngle = (*movements)[sequenceNumber]->start;
 				angle = firstAngle;
 				if (externalClock > multiplier) {
 					externalClock = 0;
@@ -144,12 +179,16 @@ void Joint::tickClock() {
 				if (internalClock == duration) {
 					++sequenceNumber;
 					internalClock = 0;
-					firstAngle = (*movements)[sequenceNumber]->start;
+					firstAngle = static_cast<float>(movements[sequenceNumber]->start);
+					//firstAngle = (*movements)[sequenceNumber]->start;
 					angle = firstAngle;
 				}
-				secondAngle = (*movements)[sequenceNumber]->stop;
-				divisions = (*movements)[sequenceNumber]->multiplier;
-				divisions *= (*movements)[sequenceNumber]->duration;
+				secondAngle = static_cast<float>(movements[sequenceNumber]->stop);
+				//secondAngle = (*movements)[sequenceNumber]->stop;
+				divisions = movements[sequenceNumber]->multiplier;
+				//divisions = (*movements)[sequenceNumber]->multiplier;
+				divisions *= movements[sequenceNumber]->duration;
+				//divisions *= (*movements)[sequenceNumber]->duration;
 				increment = secondAngle - firstAngle;
 				increment /= divisions;
 				angle += increment;
@@ -163,13 +202,25 @@ void Joint::tickClock() {
 					if (internalClock == duration) {
 						++sequenceNumber;
 						internalClock = 0;
-						firstAngle = (*movements)[sequenceNumber]->start;
+						if (sequenceNumber == *sequenceCounter) {
+							if (isLoop) {
+								sequenceNumber = 0;
+							} else {
+								return;
+							}
+						}
+						firstAngle = static_cast<float>(movements[sequenceNumber]->start);
+						//firstAngle = (*movements)[sequenceNumber]->start;
 						angle = firstAngle;
 					} else {
-						secondAngle = (*movements)[sequenceNumber]->stop;
-						firstAngle = (*movements)[sequenceNumber]->start;
-						divisions = (*movements)[sequenceNumber]->multiplier;
-						divisions *= (*movements)[sequenceNumber]->duration;
+						secondAngle = static_cast<float>(movements[sequenceNumber]->stop);
+						//secondAngle = (*movements)[sequenceNumber]->stop;
+						firstAngle = static_cast<float>(movements[sequenceNumber]->start);
+						//firstAngle = (*movements)[sequenceNumber]->start;
+						divisions = movements[sequenceNumber]->multiplier;
+						//divisions = (*movements)[sequenceNumber]->multiplier;
+						divisions *= movements[sequenceNumber]->duration;
+						//divisions *= (*movements)[sequenceNumber]->duration;
 						increment = secondAngle - firstAngle;
 						increment /= divisions;
 						angle += increment;
@@ -182,7 +233,8 @@ void Joint::tickClock() {
  
 void Joint::transitionLoop() {
 	isLoop = true;
-	movements = &loopMovements;
+	movements = loopMovements;
+	//movements = &loopMovements;
 	sequenceCounter = &loopCounter;
 	internalClock = 0;
 	externalClock = 0;

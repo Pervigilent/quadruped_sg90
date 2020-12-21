@@ -33,6 +33,42 @@ bool Organism::addJoint(Joint input) {
 	return output;
 }
 
+bool Organism::clear(int jointNumber, bool isInitial) {
+	bool output;
+
+	output = false;
+	if (jointNumber < jointCount) {
+		jointList[jointNumber].clear(isInitial);
+	}
+
+	return output;
+}
+
+bool Organism::clear(bool isInitial) {
+	bool output;
+
+	output = true;
+	for (int i = 0; i < jointCount; i++) {
+		clear(i, isInitial);
+	}
+
+	return output;
+}
+
+int Organism::getMovement(int jointNumber) {
+	return jointList[jointNumber].getMovement();
+}
+
+void Organism::incrementTime(int jointNumber) {
+	jointList[jointNumber].tickClock();
+}
+
+void Organism::incrementTime() {
+	for (int i = 0; i <= jointCount; i++) {
+		jointList[i].tickClock();
+	}
+}
+
 bool Organism::insertJoint(Joint input, int location) {
 	bool output;
 
@@ -42,6 +78,22 @@ bool Organism::insertJoint(Joint input, int location) {
 	}
 
 	return output;
+}
+
+bool Organism::popSequence(int jointNumber, bool isInitial) {
+	return jointList[jointNumber].popSequence(isInitial);
+}
+
+bool Organism::popSequence(bool isInitial) {
+	bool output;
+
+	output = false;
+
+	return output;
+}
+
+bool Organism::pushSequence(int jointNumber, JointVelocity input, bool isInitial) {
+	return jointList[jointNumber].pushSequence(input, isInitial);
 }
 
 bool Organism::replaceJoint(Joint input, int location) {
@@ -56,24 +108,62 @@ bool Organism::replaceJoint(Joint input, int location) {
 	return output;
 }
 
-int Organism::getMovement(int jointNumber) {
-	return jointList[jointNumber].getMovement();
-}
+bool Organism::reset(int jointNumber, bool isInitial) {
+	bool output;
 
-void Organism::incrementTime() {
-	for (int i = 0; i <= jointCount; i++) {
-		jointList[i].tickClock();
+	output = false;
+	if (jointNumber < jointCount) {
+		jointList[jointNumber].reset(isInitial);
+		output = true;
 	}
+
+
+	return output;
 }
 
-bool Organism::popSequence(int jointNumber, bool isInitial) {
-	return jointList[jointNumber].popSequence(isInitial);
+bool Organism::reset(bool isInitial) {
+	bool output;
+
+	output = true;
+	//for (int i = 0; i < jointCount; i++) {
+	//	jointList[i].reset(isInitial);
+	//}
+	for (int i = 0; i < jointCount; i++) {
+		//if (!reset(i, isInitial)) { // Always evaluates to true
+		//	output = false;
+		//}
+		reset(i, isInitial);
+	}
+
+	return output;
 }
 
-bool Organism::pushSequence(int jointNumber, JointVelocity input, bool isInitial) {
-	return jointList[jointNumber].pushSequence(input, isInitial);
+bool Organism::restart(int jointNumber, bool isInitial) {
+	bool output;
+
+	output = false;
+	if (jointNumber < jointCount) {
+		jointList[jointNumber].restart(isInitial);
+		output = true;
+	}
+
+	return output;
+}
+
+bool Organism::restart(bool isInitial) {
+	bool output;
+	
+	output = true;
+	for (int i = 0; i < jointCount; i++) {
+		restart(i, isInitial);
+	}
+
+	return output;
 }
  
 void Organism::transitionLoop() {
 	isLoop = true; 
+	for (int i = 0; i < jointCount; i++) {
+		jointList[i].transitionLoop();
+	}
 }

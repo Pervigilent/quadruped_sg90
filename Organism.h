@@ -22,12 +22,20 @@
 		int jointCount;
 		
 		bool addJoint(Joint input);
-		bool insertJoint(Joint input, int count); // To check joint numbering. Change approach.
-		bool replaceJoint(Joint input, int location);
-		void incrementTime();
+		bool clear(int jointNumber, bool isInitial);
+		bool clear(bool isInitial);
 		int getMovement(int jointNumber);
+		void incrementTime();
+		void incrementTime(int jointNumber);
+		bool insertJoint(Joint input, int count); // To check joint numbering. Change approach.
 		bool popSequence(int jointNumber, bool isInitial);
+		bool popSequence(bool isInitial); // Pop a sequence from each joint
 		bool pushSequence(int jointNumber, JointVelocity input, bool isInitial);
+		bool replaceJoint(Joint input, int location);
+		bool reset(int jointNumber, bool isInitial);
+		bool reset(bool isInitial);
+		bool restart(int jointNumber, bool isInitial);
+		bool restart(bool isInitial); // Restart sequence from sequence number 0
 		void transitionLoop();
  };
  
